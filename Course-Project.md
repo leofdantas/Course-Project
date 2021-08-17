@@ -1,3 +1,6 @@
+Executive Summary
+=================
+
 People often quantify how much of a particular activity they do, but
 they rarely quantify how well they do it. Using measurement data from
 accelerometers on the belt, forearm, arm, and dumbell of six
@@ -14,36 +17,9 @@ Proceedings of 4th International Conference in Cooperation with SIGCHI
 
 Data: Training Data -
 <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv" class="uri">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv</a>
+
 Testing Data -
 <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv" class="uri">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv</a>
-
-    ## Loading required package: lattice
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-    ## randomForest 4.6-14
-
-    ## Type rfNews() to see new features/changes/bug fixes.
-
-    ## 
-    ## Attaching package: 'randomForest'
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     combine
-
-    ## The following object is masked from 'package:ggplot2':
-    ## 
-    ##     margin
 
 Loading the Data
 ----------------
@@ -64,7 +40,7 @@ the actual test of our predictions.
 Cleaning the Data
 -----------------
 
-By looking at each columns, we can notice how wome variables are not
+By looking at each column, we can notice how some variables are not
 necessary—such as the row number, user\_name, timestamp, as well as the
 window number and type. I remove those.
 
@@ -111,11 +87,11 @@ missing values.
 ![](Course-Project_files/figure-markdown_strict/unnamed-chunk-6-1.png)
 
 Given this prevalence of NAs in many columns, it might be best to just
-exclude this variables from the algorithm. However, even if most
+exclude these variables from the algorithm. However, even if most
 variables have a lot of NAs, maybe the few numeric entries they possess
 are shared across all columns—meaning, a few observations actually
-possess all measurements. Since we could actually just use those
-observations, we can repeat the same process and plot the percentage of
+possess all measurements. Since we could just use those rows if that
+were the case, we can repeat the same process and plot the percentage of
 NA values by row:
 
     table_row_NAs <- as.data.frame(table(row_NAs))
@@ -138,7 +114,7 @@ with full data, I opted to eliminate the columns with more than 90% NAs.
     testing <- testing[, colSums(is.na(testing)) < 0.1]
 
 Finally, before creating the algorithm, we just need to make sure our
-outcome is a factor.
+outcome—the classification of the weightlifting movement—is a factor.
 
     training$classe <- as.factor(training$classe)
     testing$classe <- as.factor(testing$classe)
@@ -190,12 +166,12 @@ estimate its accuracy.
     ## Detection Prevalence   0.2843   0.1935   0.1744   0.1639   0.1838
     ## Balanced Accuracy      1.0000   1.0000   1.0000   1.0000   1.0000
 
-As we can see, our predictions were 100% accurate: by taking into
-consideration the values in all of our variables, we perfectly predicted
-the “classe” of each observation—we correctly estimated the quality of
-the weight lifting movement.
+As we can see, our predictions were 100% accurate. In other words, by
+taking into consideration the values in all of our variables, we
+perfectly predicted the “classe” of each observation—we correctly
+estimated the quality of the weight-lifting movement.
 
-Of course, a high accuracy—low in sample error—is to be expected from
+Of course, a high accuracy—low in-sample error—is to be expected from
 the training data. To make sure our algorithm can be applied to new
 data, I repeat the process for the testing dataset.
 
@@ -206,37 +182,37 @@ data, I repeat the process for the testing dataset.
     ## 
     ##           Reference
     ## Prediction    A    B    C    D    E
-    ##          A 2232   11    0    0    0
-    ##          B    0 1503    5    0    0
-    ##          C    0    4 1359   14    0
-    ##          D    0    0    4 1272   10
-    ##          E    0    0    0    0 1432
+    ##          A 2229   21    0    0    0
+    ##          B    2 1490   14    0    0
+    ##          C    1    7 1351   25    1
+    ##          D    0    0    3 1259    3
+    ##          E    0    0    0    2 1438
     ## 
     ## Overall Statistics
-    ##                                           
-    ##                Accuracy : 0.9939          
-    ##                  95% CI : (0.9919, 0.9955)
-    ##     No Information Rate : 0.2845          
-    ##     P-Value [Acc > NIR] : < 2.2e-16       
-    ##                                           
-    ##                   Kappa : 0.9923          
-    ##                                           
-    ##  Mcnemar's Test P-Value : NA              
+    ##                                          
+    ##                Accuracy : 0.9899         
+    ##                  95% CI : (0.9875, 0.992)
+    ##     No Information Rate : 0.2845         
+    ##     P-Value [Acc > NIR] : < 2.2e-16      
+    ##                                          
+    ##                   Kappa : 0.9873         
+    ##                                          
+    ##  Mcnemar's Test P-Value : NA             
     ## 
     ## Statistics by Class:
     ## 
     ##                      Class: A Class: B Class: C Class: D Class: E
-    ## Sensitivity            1.0000   0.9901   0.9934   0.9891   0.9931
-    ## Specificity            0.9980   0.9992   0.9972   0.9979   1.0000
-    ## Pos Pred Value         0.9951   0.9967   0.9869   0.9891   1.0000
-    ## Neg Pred Value         1.0000   0.9976   0.9986   0.9979   0.9984
+    ## Sensitivity            0.9987   0.9816   0.9876   0.9790   0.9972
+    ## Specificity            0.9963   0.9975   0.9948   0.9991   0.9997
+    ## Pos Pred Value         0.9907   0.9894   0.9755   0.9953   0.9986
+    ## Neg Pred Value         0.9995   0.9956   0.9974   0.9959   0.9994
     ## Prevalence             0.2845   0.1935   0.1744   0.1639   0.1838
-    ## Detection Rate         0.2845   0.1916   0.1732   0.1621   0.1825
-    ## Detection Prevalence   0.2859   0.1922   0.1755   0.1639   0.1825
-    ## Balanced Accuracy      0.9990   0.9947   0.9953   0.9935   0.9965
+    ## Detection Rate         0.2841   0.1899   0.1722   0.1605   0.1833
+    ## Detection Prevalence   0.2868   0.1919   0.1765   0.1612   0.1835
+    ## Balanced Accuracy      0.9975   0.9895   0.9912   0.9890   0.9985
 
-Although the accuracy decrease—the out sample error is always
-greater—our predictions were almost perfect, with an accuracy of 0.9917.
+Although the accuracy decreases—the out-sample error is always
+greater—our predictions were almost perfect, with an accuracy of 99.17%.
 This is certainly confident enough to apply the algorithm to the
 original test data.
 

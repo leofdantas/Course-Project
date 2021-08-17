@@ -1,9 +1,12 @@
 ---
-title: "Course Project"
+title: "Machine Learning Course Project"
 author: "Leonardo Dantas"
 date: "8/16/2021"
-output: hmtl_document
+output: md_document
 ---
+
+Executive Summary
+============
 
 People often quantify how much of a particular activity they do, but they rarely quantify how well they do it. Using measurement data from accelerometers on the belt, forearm, arm, and dumbell of six participants during their weight-lifting exercises, this report uses machine learning to predict how well they perform each movement. Working with the training dataset from Velloso et al, I create an algorithm based on the classification of the quality of each movement (variable "classe") and apply that to the authors' testing data.
 
@@ -12,9 +15,10 @@ Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. Qualitative Activ
 
 Data:
 Training Data - https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
 Testing Data - https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
 
-```{r, echo=FALSE,warning=FALSE}
+```{r, echo=FALSE, message=FALSE}
 setwd("/Volumes/GoogleDrive/My Drive/Coursera/Course 8 - Machine Learning/Course Project")
 library(ggplot2)
 library(caret)
@@ -34,7 +38,7 @@ testing <- data[-trainset, ]
 ```
 
 ## Cleaning the Data
-By looking at each columns, we can notice how wome variables are not necessary---such as the row number, user_name, timestamp, as well as the window number and type. I remove those.
+By looking at each column, we can notice how some variables are not necessary---such as the row number, user_name, timestamp, as well as the window number and type. I remove those.
 ```{r}
 training <- training[,-c(1:7)]
 testing <- testing[,-c(1:7)]
@@ -73,7 +77,7 @@ ggplot(table_col_NAs, aes(col_NAs, Freq, fill = -col_NAs)) +
   ylab("Number of Columns")
 ```
 
-Given this prevalence of NAs in many columns, it might be best to just exclude this variables from the algorithm. However, even if most variables have a lot of NAs, maybe the few numeric entries they possess are shared across all columns---meaning, a few observations actually possess all measurements. Since we could actually just use those observations, we can repeat the same process and plot the percentage of NA values by row:
+Given this prevalence of NAs in many columns, it might be best to just exclude these variables from the algorithm. However, even if most variables have a lot of NAs, maybe the few numeric entries they possess are shared across all columns---meaning, a few observations actually possess all measurements. Since we could just use those rows if that were the case, we can repeat the same process and plot the percentage of NA values by row:
 
 ```{r}
 table_row_NAs <- as.data.frame(table(row_NAs))
@@ -94,7 +98,7 @@ training <- training[, colSums(is.na(training)) < 0.1]
 testing <- testing[, colSums(is.na(testing)) < 0.1]
 ```
 
-Finally, before creating the algorithm, we just need to make sure our outcome is a factor.
+Finally, before creating the algorithm, we just need to make sure our outcome---the classification of the weightlifting movement---is a factor.
 ```{r}
 training$classe <- as.factor(training$classe)
 testing$classe <- as.factor(testing$classe)
@@ -112,15 +116,15 @@ train_rf <- predict(modFit_rf, training, type = "class")
 confusionMatrix(train_rf, training$classe)
 ```
 
-As we can see, our predictions were 100% accurate: by taking into consideration the values in all of our variables, we perfectly predicted the "classe" of each observation---we correctly estimated the quality of the weight lifting movement.
+As we can see, our predictions were 100% accurate. In other words, by taking into consideration the values in all of our variables, we perfectly predicted the "classe" of each observation---we correctly estimated the quality of the weight-lifting movement.
 
-Of course, a high accuracy---low in sample error---is to be expected from the training data. To make sure our algorithm can be applied to new data, I repeat the process for the testing dataset.
+Of course, a high accuracy---low in-sample error---is to be expected from the training data. To make sure our algorithm can be applied to new data, I repeat the process for the testing dataset.
 ```{r}
 test_rf <- predict(modFit_rf, testing, type = "class")
 confusionMatrix(test_rf, testing$classe)
 ```
 
-Although the accuracy decrease---the out sample error is always greater---our predictions were almost perfect, with an accuracy of 0.9917. This is certainly confident enough to apply the algorithm to the original test data.
+Although the accuracy decreases---the out-sample error is always greater---our predictions were almost perfect, with an accuracy of 99.17%. This is certainly confident enough to apply the algorithm to the original test data.
 
 ## Prediction
 
